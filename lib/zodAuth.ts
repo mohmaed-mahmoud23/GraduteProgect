@@ -72,13 +72,29 @@ export const createBrandSchema = z.object({
 
 export const createCategorySchema = z.object({
   name: z.string().min(1, "Name is required"),
+  slug: z.string().min(1, "slug is required"),
+  brand: z.string().min(1, "Brand is required"), // Linked brand
   attachment: z.instanceof(File, {
     message: "Category image is required",
   }),
 });
 
+export const createProductSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(1, "Description is required"),
+  brand: z.string().min(1, "Brand is required"),
+  category: z.string().min(1, "Category is required"),
+  originalPrice: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Price must be a number"),
+  discountPercent: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Discount must be a number"),
+  stock: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Stock must be a number"),
+  attachments: z.instanceof(File, {
+    message: "Product image is required",
+  }),
+});
+
 export type CreateBrandFormValues = z.infer<typeof createBrandSchema>;
 export type CreateCategoryFormValues = z.infer<typeof createCategorySchema>;
+export type CreateProductFormValues = z.infer<typeof createProductSchema>;
 
 export type LoginSchemaSchemaValues = z.infer<typeof LoginSchema>;
 export type ActiveEmailSchemaValues = z.infer<typeof ActiveEmailSchema>;

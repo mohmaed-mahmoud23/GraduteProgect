@@ -1,17 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CreateBrandResponse, LOGINEmailResponseData, UserProfileResponse, GetAllBrandsResponse, CreateCategoryResponse, GetAllCategoriesResponse } from '@/app/interfaces';
+import { CreateBrandResponse, LOGINEmailResponseData, UserProfileResponse, GetAllBrandsResponse, CreateCategoryResponse, GetAllCategoriesResponse, ActiveEmailResponse, CreateProductResponse, GetAllProductsResponse } from '@/app/interfaces';
 import { ActiveEmailSchemaValues, LoginSchemaSchemaValues, RegisterFormValues, registerSchema } from './../../../lib/zodAuth';
 // src/services/apiSlice.ts
 
 import cookieService from "@/lib/cookieService";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3001/",
+  baseUrl: "http://127.0.0.1:3001",
   prepareHeaders: (headers) => {
     const token = cookieService.get("token");
-    if (token) headers.set("Authorization", `Bearer ${token}`);
+
+    if (token) {
+      // Hard clean the token (remove quotes/spaces)
+      const cleanToken = token.toString().replace(/^"|"$/g, "").trim();
+
+      let prefix = "Bearer";
+      try {
+        const decoded: any = jwtDecode(cleanToken);
+        // Only use "System" if role is exactly "admin"
+        if (decoded?.role === "admin") {
+          prefix = "System";
+        }
+      } catch (error) {
+        console.error("Error decoding token in prepareHeaders:", error);
+        // Fallback to Bearer if decoding fails
+      }
+
+      headers.set("Authorization", `${prefix} ${cleanToken}`);
+    }
     return headers;
   },
 });
@@ -60,6 +79,9 @@ export const ApiSlice = createApi({
   baseQuery: baseQueryWithReauth,
 
   tagTypes: [
+    "Brand",
+    "Category",
+    "Product",
     // "Batch",
     // "BatchStudents",
     // "Track",
@@ -90,7 +112,7 @@ export const ApiSlice = createApi({
         body: credentials,
       }),
     }),
-    Singin: builder.mutation<LOGINEmailResponseData, LoginSchemaSchemaValues>({
+    Singin: builder.mutation<ActiveEmailResponse, LoginSchemaSchemaValues>({
       query: (credentials) => ({
         url: "auth/login",
         method: "POST",
@@ -104,47 +126,100 @@ export const ApiSlice = createApi({
     >({
       query: ({ name, slogan, attachment }) => {
         const formData = new FormData();
+        // Critical: append attachment first and normalize filename to avoid signature errors
+        formData.append("attachment", attachment, "image.jpg");
         formData.append("name", name);
         formData.append("slogan", slogan);
-        formData.append("attachment", attachment);
 
         return {
-          url: "api/Brands/Create",
+          url: "brand",
           method: "POST",
           body: formData,
         };
       },
+      invalidatesTags: ["Brand"],
     }),
 
     getBrands: builder.query<GetAllBrandsResponse, void>({
       query: () => ({
-        url: "api/Brands/GetAll",
+        url: "brand",
         method: "GET",
       }),
+      providesTags: ["Brand"],
+    }),
+postcategory: builder.mutation<
+  CreateCategoryResponse,
+  { name: string; brands: string[]; attachment: File; slug: string }
+>({
+  query: ({ name, brands, attachment, slug }) => {
+    const formData = new FormData();
+
+    formData.append("attachment", attachment, "image.jpg");
+    formData.append("name", name);
+    formData.append("slug", slug);
+
+    // أهم سطر 🔥
+    brands.forEach((id, index) => {
+      formData.append(`brands[${index}]`, id);
+    });
+
+    return {
+      url: "category",
+      method: "POST",
+      body: formData,
+    };
+  },
+  invalidatesTags: ["Category"],
+}),
+
+    getProducts: builder.query<GetAllProductsResponse, void>({
+      query: () => ({
+        url: "product",
+        method: "GET",
+      }),
+      providesTags: ["Product"],
     }),
 
-    postcategory: builder.mutation<
-      CreateCategoryResponse,
-      { name: string; attachment: File }
+    postproduct: builder.mutation<
+      CreateProductResponse,
+      {
+        name: string;
+        description: string;
+        brand: string;
+        category: string;
+        originalPrice: number | string;
+        discountPercent: number | string;
+        stock: number | string;
+        attachments: File;
+      }
     >({
-      query: ({ name, attachment }) => {
+      query: (data) => {
         const formData = new FormData();
-        formData.append("name", name);
-        formData.append("attachment", attachment);
+        // Postman shows plural 'attachments' but usually it's one file in 'create product' screenshot
+        formData.append("attachments", data.attachments, "product.jpg");
+        formData.append("name", data.name);
+        formData.append("description", data.description);
+        formData.append("brand", data.brand);
+        formData.append("category", data.category);
+        formData.append("originalPrice", data.originalPrice.toString());
+        formData.append("discountPercent", data.discountPercent.toString());
+        formData.append("stock", data.stock.toString());
 
         return {
-          url: "api/Categories",
+          url: "product",
           method: "POST",
           body: formData,
         };
       },
+      invalidatesTags: ["Product"],
     }),
 
     getCategories: builder.query<GetAllCategoriesResponse, void>({
       query: () => ({
-        url: "api/Categories",
+        url: "category",
         method: "GET",
       }),
+      providesTags: ["Category"],
     }),
 
     getProfile: builder.query<UserProfileResponse, void>({
@@ -184,5 +259,6 @@ export const {
   useGetBrandsQuery,
   usePostcategoryMutation,
   useGetCategoriesQuery,
-
-} = ApiSlice  
+  usePostproductMutation,
+  useGetProductsQuery,
+} = ApiSlice

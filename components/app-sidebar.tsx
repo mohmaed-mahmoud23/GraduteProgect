@@ -46,6 +46,21 @@ const data = {
       icon: IconDashboard,
     },
     {
+      title: "Brands",
+      url: "/dashboard/brands",
+      icon: IconListDetails,
+    },
+    {
+      title: "Categories",
+      url: "/dashboard/categories",
+      icon: IconFolder,
+    },
+    {
+      title: "Products",
+      url: "/dashboard/products",
+      icon: IconDatabase,
+    },
+    {
       title: "Lifecycle",
       url: "/dashboard/lfesicel",
       icon: IconListDetails,

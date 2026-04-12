@@ -38,7 +38,7 @@ export default function Login() {
   const router = useRouter();
   const form = useForm<LoginSchemaSchemaValues>({
     resolver: zodResolver(LoginSchema), // <--- هنا
-    defaultValues: {  
+    defaultValues: {
       email: "",
 
       password: "",
@@ -47,10 +47,20 @@ export default function Login() {
 
   const onSubmit = async (data: LoginSchemaSchemaValues) => {
     try {
-      const result: ActiveEmailResponse = await login(data).unwrap();
+      const result = await login(data).unwrap();
 
-      const accessToken = result.data.credential.access_token;
-console.log(accessToken)
+      // Based on ActiveEmailResponse interface, it's result.data.credential.access_token
+      // However, if unwrap returns the whole object, this is correct. 
+      // I am adding a check to be sure we don't store "undefined".
+      const accessToken = result?.data?.credential?.access_token || (result as any)?.credential?.access_token;
+
+      if (!accessToken) {
+        console.error("Token not found in response:", result);
+        toast.error("Login failed: Invalid server response");
+        return;
+      }
+
+      console.log("Logged in with token:", accessToken);
       cookieService.set("token", accessToken, {
         path: "/",
         maxAge: 60 * 60 * 24,

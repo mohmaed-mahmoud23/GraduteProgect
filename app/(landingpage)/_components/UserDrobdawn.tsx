@@ -81,7 +81,7 @@ export function UserDropdown() {
         {/* Dashboard يظهر لغير اليوزر */}
         {!isUser && (
           <DropdownMenuItem asChild>
-            <Link href={"/dashbord"}>
+            <Link href={"/dashboard"}>
               <LayoutDashboardIcon className="mr-2 h-4 w-4" />
               Dashboard
             </Link>

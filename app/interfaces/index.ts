@@ -1,4 +1,4 @@
-// src/interfaces/auth.ts
+// src/interfaces/api.ts
 
 // ================= AUTH =================
 export interface Credential {
@@ -6,12 +6,10 @@ export interface Credential {
   refresh_token: string;
 }
 
-// بعد unwrap
 export interface LOGINEmailResponseData {
   credential: Credential;
 }
 
-// response كامل
 export interface ActiveEmailResponse {
   message?: string;
   status?: number;
@@ -35,7 +33,7 @@ export interface User {
 
   preferredLanguage: string;
 
-  wishlist: unknown[]; // بدل any
+  wishlist: unknown[];
 
   createdAt: string;
   updatedAt: string;
@@ -61,18 +59,21 @@ export interface Brand {
   name: string;
   slogan: string;
   slug: string;
-
   image: BrandImage;
-
   createdBy: string;
-
   createdAt: string;
   updatedAt: string;
-
   __v: number;
 }
 
-// response بتاع create brand
+// ✅ Request
+export interface CreateBrandRequest {
+  name: string;
+  slogan: string;
+  attachment: File;
+}
+
+// ✅ Response
 export interface CreateBrandResponse {
   message: string;
   status: number;
@@ -85,7 +86,9 @@ export interface GetAllBrandsResponse {
   message: string;
   status: number;
   data: {
-    brands?: Brand[];
+    result?: {
+      result: Brand[];
+    };
     [key: string]: any;
   };
 }
@@ -102,12 +105,24 @@ export interface Category {
   name: string;
   slug: string;
   image: CategoryImage;
+
+  brands: string[]; // ✅ الباك بيستخدم array
+
   createdBy: string;
   createdAt: string;
   updatedAt: string;
   __v?: number;
 }
 
+// ✅ Request (ده أهم جزء اتحل هنا)
+export interface CreateCategoryRequest {
+  name: string;
+  slug: string;
+  attachment: File;
+  brands: string[]; // ✅ لازم array
+}
+
+// ✅ Response
 export interface CreateCategoryResponse {
   message: string;
   status: number;
@@ -120,7 +135,74 @@ export interface GetAllCategoriesResponse {
   message: string;
   status: number;
   data: {
-    categories?: Category[];
+    result?: {
+      result: Category[];
+    };
+    [key: string]: any;
+  };
+}
+
+// ================= PRODUCT =================
+export interface ProductImage {
+  public_id: string;
+  secure_url: string;
+  _id?: string;
+}
+
+export interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  slug: string;
+  originalPrice: number;
+  discountPercent: number;
+  finalPrice: number;
+  stock: number;
+
+  images: ProductImage[];
+  attachments: ProductImage[];
+
+  brand: string | Brand;      // ✅ واحدة بس
+  category: string | Category; // ✅ واحدة بس
+
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+}
+
+// ✅ Request
+export interface CreateProductRequest {
+  name: string;
+  description: string;
+  slug: string;
+  originalPrice: number;
+  discountPercent: number;
+  stock: number;
+
+  brand: string;     // ✅ مش array
+  category: string;  // ✅ مش array
+
+  attachments: File[]; // أو FileList حسب استخدامك
+}
+
+// ✅ Response
+export interface CreateProductResponse {
+  message: string;
+  status: number;
+  data: {
+    product: Product;
+  };
+}
+
+export interface GetAllProductsResponse {
+  message: string;
+  status: number;
+  data: {
+    result?: {
+      result: Product[];
+    };
+    totalCount?: number;
     [key: string]: any;
   };
 }
