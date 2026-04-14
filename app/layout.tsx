@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider"
 import ProvidersComponetns from "./providers/Provider";
 import { Toaster } from "sonner";
+import Footer from "./(landingpage)/_components/Foter";
+import Navbar from "./(landingpage)/_components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +39,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+
           {children}
 
             <Toaster position="top-right" />

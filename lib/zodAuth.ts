@@ -87,9 +87,7 @@ export const createProductSchema = z.object({
   originalPrice: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Price must be a number"),
   discountPercent: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Discount must be a number"),
   stock: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Stock must be a number"),
-  attachments: z.instanceof(File, {
-    message: "Product image is required",
-  }),
+attachments: z.array(z.instanceof(File))
 });
 
 export type CreateBrandFormValues = z.infer<typeof createBrandSchema>;

@@ -32,7 +32,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Plus, Loader2, Sparkles, Image as ImageIcon, Box, Tag, Layers, DollarSign, Archive } from "lucide-react";
+import { Loader2, Sparkles, Image as ImageIcon, Box, Tag, DollarSign, Archive } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -58,7 +58,7 @@ export default function CreateProductPage() {
       originalPrice: 0,
       discountPercent: 0,
       stock: 0,
-      attachments: undefined as unknown as File,
+      attachments: undefined as unknown as File[],
     },
   });
 
@@ -152,7 +152,7 @@ export default function CreateProductPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="rounded-xl border-muted/20 shadow-xl">
-                              {brands.map((brand) => (
+                              {brands.map((brand: any) => (
                                 <SelectItem key={brand._id} value={brand._id} className="rounded-lg">
                                   {brand.name}
                                 </SelectItem>
@@ -179,7 +179,7 @@ export default function CreateProductPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="rounded-xl border-muted/20 shadow-xl">
-                              {categories.map((cat) => (
+                              {categories.map((cat: any) => (
                                 <SelectItem key={cat._id} value={cat._id} className="rounded-lg">
                                   {cat.name}
                                 </SelectItem>
@@ -251,32 +251,112 @@ export default function CreateProductPage() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="attachments"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                            Product Image
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              className="h-12 rounded-xl bg-background/50 border-muted-foreground/20 file:bg-primary/10 file:text-primary file:rounded-lg file:border-none file:px-3 file:mr-4 cursor-pointer"
-                              onChange={(e) => field.onChange(e.target.files?.[0])}
-                            />
-                            <ImageIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50 pointer-events-none" />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
               </div>
+
+              {/* ── Multi-Image Upload ── */}
+              <FormField
+                control={form.control}
+                name="attachments"
+                render={({ field }) => {
+                  const selectedFiles: File[] = field.value ?? [];
+
+                  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newFiles = Array.from(e.target.files ?? []);
+                    if (newFiles.length === 0) return;
+                    // Merge with existing, skip duplicates by name + size
+                    const merged = [...selectedFiles];
+                    newFiles.forEach((nf) => {
+                      const isDup = merged.some((ef) => ef.name === nf.name && ef.size === nf.size);
+                      if (!isDup) merged.push(nf);
+                    });
+                    field.onChange(merged);
+                    e.target.value = ""; // reset so same file can be re-added after removal
+                  };
+
+                  const removeFile = (index: number) => {
+                    const updated = selectedFiles.filter((_, i) => i !== index);
+                    field.onChange(updated.length > 0 ? updated : (undefined as unknown as File[]));
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-primary" /> Product Images
+                        <span className="text-xs font-normal text-muted-foreground/60 ml-1">(select one or more)</span>
+                      </FormLabel>
+                      <FormControl>
+                        <div className="space-y-3">
+                          {/* Clickable drop-zone */}
+                          <label
+                            htmlFor="product-images-input"
+                            className="flex flex-col items-center justify-center w-full min-h-[120px] rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/60 transition-all cursor-pointer group"
+                          >
+                            <ImageIcon className="w-8 h-8 text-primary/40 group-hover:text-primary/70 transition-colors mb-2" />
+                            <span className="text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
+                              Click to select images
+                            </span>
+                            <span className="text-xs text-muted-foreground/50 mt-1">
+                              PNG, JPG, WEBP · Multiple allowed
+                            </span>
+                            <Input
+                              id="product-images-input"
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              className="hidden"
+                              onChange={handleFileChange}
+                            />
+                          </label>
+
+                          {/* Thumbnails */}
+                          {selectedFiles.length > 0 && (
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                              {selectedFiles.map((file, index) => {
+                                const url = URL.createObjectURL(file);
+                                return (
+                                  <div
+                                    key={`${file.name}-${index}`}
+                                    className="relative group rounded-xl overflow-hidden border border-muted/30 aspect-square shadow-sm"
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={url}
+                                      alt={file.name}
+                                      className="w-full h-full object-cover"
+                                      onLoad={() => URL.revokeObjectURL(url)}
+                                    />
+                                    {/* Hover overlay with remove button */}
+                                    <button
+                                      type="button"
+                                      onClick={() => removeFile(index)}
+                                      className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      aria-label={`Remove ${file.name}`}
+                                    >
+                                      <span className="text-white text-xs font-bold bg-red-500 rounded-full w-6 h-6 flex items-center justify-center shadow-lg">✕</span>
+                                    </button>
+                                    {/* Index badge */}
+                                    <span className="absolute top-1 left-1 text-[10px] font-bold bg-black/60 text-white rounded-full px-1.5 py-0.5">
+                                      {index + 1}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+
+                          {selectedFiles.length > 0 && (
+                            <p className="text-xs text-muted-foreground/60">
+                              {selectedFiles.length} image{selectedFiles.length > 1 ? "s" : ""} selected · hover a thumbnail to remove it
+                            </p>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
 
               <div className="pt-6 flex justify-end gap-4 border-t border-muted/20">
                 <Button 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CreateBrandResponse, LOGINEmailResponseData, UserProfileResponse, GetAllBrandsResponse, CreateCategoryResponse, GetAllCategoriesResponse, ActiveEmailResponse, CreateProductResponse, GetAllProductsResponse } from '@/app/interfaces';
+import { CreateBrandResponse, LOGINEmailResponseData, UserProfileResponse, GetAllBrandsResponse, CreateCategoryResponse, GetAllCategoriesResponse, ActiveEmailResponse, CreateProductResponse, GetAllProductsResponse, Product, GetSingleProductResponse, AddToCartResponse, GetCartResponse } from '@/app/interfaces';
 import { ActiveEmailSchemaValues, LoginSchemaSchemaValues, RegisterFormValues, registerSchema } from './../../../lib/zodAuth';
 // src/services/apiSlice.ts
 
@@ -147,39 +147,37 @@ export const ApiSlice = createApi({
       }),
       providesTags: ["Brand"],
     }),
-postcategory: builder.mutation<
-  CreateCategoryResponse,
-  { name: string; brands: string[]; attachment: File; slug: string }
->({
-  query: ({ name, brands, attachment, slug }) => {
-    const formData = new FormData();
+    postcategory: builder.mutation<
+      CreateCategoryResponse,
+      { name: string; brands: string[]; attachment: File; slug: string }
+    >({
+      query: ({ name, brands, attachment, slug }) => {
+        const formData = new FormData();
 
-    formData.append("attachment", attachment, "image.jpg");
-    formData.append("name", name);
-    formData.append("slug", slug);
+        formData.append("attachment", attachment, "image.jpg");
+        formData.append("name", name);
+        formData.append("slug", slug);
 
-    // أهم سطر 🔥
-    brands.forEach((id, index) => {
-      formData.append(`brands[${index}]`, id);
-    });
+        // أهم سطر 🔥
+        brands.forEach((id, index) => {
+          formData.append(`brands[${index}]`, id);
+        });
 
-    return {
-      url: "category",
-      method: "POST",
-      body: formData,
-    };
-  },
-  invalidatesTags: ["Category"],
-}),
+        return {
+          url: "category",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
 
     getProducts: builder.query<GetAllProductsResponse, void>({
       query: () => ({
         url: "product",
         method: "GET",
       }),
-      providesTags: ["Product"],
     }),
-
     postproduct: builder.mutation<
       CreateProductResponse,
       {
@@ -190,13 +188,15 @@ postcategory: builder.mutation<
         originalPrice: number | string;
         discountPercent: number | string;
         stock: number | string;
-        attachments: File;
+        attachments: File[];
       }
     >({
       query: (data) => {
         const formData = new FormData();
-        // Postman shows plural 'attachments' but usually it's one file in 'create product' screenshot
-        formData.append("attachments", data.attachments, "product.jpg");
+        // Append each image separately under the same key 'attachments'
+        data.attachments.forEach((file) => {
+          formData.append("attachments", file, file.name || "product.jpg");
+        });
         formData.append("name", data.name);
         formData.append("description", data.description);
         formData.append("brand", data.brand);
@@ -222,13 +222,64 @@ postcategory: builder.mutation<
       providesTags: ["Category"],
     }),
 
+
+
+
+
+
+
+addToCart: builder.mutation<
+  AddToCartResponse,
+  { productId: string; quantity: number }
+>({
+  query: ({ productId, quantity }) => ({
+    url: "cart",
+    method: "POST",
+    body: {
+      productId,
+      quantity,
+    },
+  }),
+}),
+
+
+
+
+
+
+
+getCart: builder.query<GetCartResponse, void>({
+  query: () => ({
+    url: "cart",
+    method: "GET",
+  }),
+}),
+
+
+
+    getsingelprodact: builder.query<GetSingleProductResponse, string>({
+      query: (id) => `/product/${id}`,
+    }),
+
+
+
+
     getProfile: builder.query<UserProfileResponse, void>({
       query: () => ({
         url: "user",
         method: "GET",
       }),
     }),
+  
 
+
+
+
+
+
+
+
+    
     resendConfirmEmail: builder.mutation<
       { message: string },
       { email: string }
@@ -261,4 +312,7 @@ export const {
   useGetCategoriesQuery,
   usePostproductMutation,
   useGetProductsQuery,
+  useGetsingelprodactQuery,
+  useAddToCartMutation,
+  useGetCartQuery,
 } = ApiSlice

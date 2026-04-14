@@ -1,5 +1,3 @@
-// src/interfaces/api.ts
-
 // ================= AUTH =================
 export interface Credential {
   access_token: string;
@@ -66,14 +64,12 @@ export interface Brand {
   __v: number;
 }
 
-// ✅ Request
 export interface CreateBrandRequest {
   name: string;
   slogan: string;
   attachment: File;
 }
 
-// ✅ Response
 export interface CreateBrandResponse {
   message: string;
   status: number;
@@ -106,7 +102,7 @@ export interface Category {
   slug: string;
   image: CategoryImage;
 
-  brands: string[]; // ✅ الباك بيستخدم array
+  brands: string[];
 
   createdBy: string;
   createdAt: string;
@@ -114,15 +110,13 @@ export interface Category {
   __v?: number;
 }
 
-// ✅ Request (ده أهم جزء اتحل هنا)
 export interface CreateCategoryRequest {
   name: string;
   slug: string;
   attachment: File;
-  brands: string[]; // ✅ لازم array
+  brands: string[];
 }
 
-// ✅ Response
 export interface CreateCategoryResponse {
   message: string;
   status: number;
@@ -143,50 +137,56 @@ export interface GetAllCategoriesResponse {
 }
 
 // ================= PRODUCT =================
+
+// صورة المنتج
 export interface ProductImage {
   public_id: string;
   secure_url: string;
-  _id?: string;
+  _id: string;
 }
 
+// المنتج
 export interface Product {
   _id: string;
   name: string;
   description: string;
   slug: string;
-  originalPrice: number;
-  discountPercent: number;
-  finalPrice: number;
-  stock: number;
+
+  assetFolderId: string;
 
   images: ProductImage[];
-  attachments: ProductImage[];
 
-  brand: string | Brand;      // ✅ واحدة بس
-  category: string | Category; // ✅ واحدة بس
+  brand: string;
+  category: string;
+
+  discountPercent: number;
+  salePrice: number;
+  originalPrice: number;
+
+  stock: number;
+  soldItems: number;
 
   createdBy: string;
+
   createdAt: string;
   updatedAt: string;
-  __v?: number;
+
+  __v: number;
 }
 
-// ✅ Request
+// إنشاء منتج
 export interface CreateProductRequest {
   name: string;
   description: string;
-  slug: string;
-  originalPrice: number;
-  discountPercent: number;
-  stock: number;
-
-  brand: string;     // ✅ مش array
-  category: string;  // ✅ مش array
-
-  attachments: File[]; // أو FileList حسب استخدامك
+  brand: string;
+  category: string;
+  originalPrice: number | string;
+  discountPercent: number | string;
+  stock: number | string;
+  attachments: File;
 }
 
-// ✅ Response
+// response إنشاء منتج
 export interface CreateProductResponse {
   message: string;
   status: number;
@@ -195,14 +195,135 @@ export interface CreateProductResponse {
   };
 }
 
+// جلب كل المنتجات
 export interface GetAllProductsResponse {
   message: string;
   status: number;
   data: {
-    result?: {
+    result: {
       result: Product[];
     };
     totalCount?: number;
-    [key: string]: any;
+  };
+}
+
+
+
+
+
+
+
+
+
+
+
+export interface GetSingleProductResponse {
+  message: string;
+  status: number;
+  data: {
+    product: Product;
+  };
+}
+
+
+
+
+export interface CartProduct {
+  productId: string;
+  quantity: number;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Cart {
+  _id: string;
+  createdBy: string;
+  products: CartProduct[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface AddToCartResponse {
+  message: string;
+  status: number;
+  data: {
+    cart: Cart;
+  };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Get data Cart //
+export interface CartProductItem {
+  _id: string;
+  quantity: number;
+  createdAt: string;
+  updatedAt: string;
+
+  productId: {
+    _id: string;
+    name: string;
+    description: string;
+    images: {
+      public_id: string;
+      secure_url: string;
+      _id: string;
+    }[];
+    brand: string;
+    category: string;
+    discountPercent: number;
+    salePrice: number;
+    originalPrice: number;
+    stock: number;
+    slug: string;
+  };
+}
+
+export interface Cart {
+  _id: string;
+  createdBy: string;
+  products: CartProductItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetCartResponse {
+  message: string;
+  status: number;
+  data: {
+    cart: Cart;
   };
 }
