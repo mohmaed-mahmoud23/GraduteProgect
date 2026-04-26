@@ -326,4 +326,188 @@ export interface GetCartResponse {
   data: {
     cart: Cart;
   };
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+export interface OrderProduct {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  _id: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Order {
+  orderId: string;
+  address: string;
+  phone: string;
+  discount: number;
+  total: number;
+  payment: string;
+  products: OrderProduct[];
+  createdBy: string;
+  _id: string;
+  status: number;
+  createdAt: string;
+  updatedAt: string;
+  subtotal: number;
+  id: string;
+}
+
+export interface CreateOrderResponse {
+  message: string;
+  status: number;
+  data: {
+    order: Order;
+  };
+}
+
+
+
+
+
+
+
+
+
+export interface CreateOrderPayload {
+  address: string;
+  phone: string;
+  payment: string;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+///user order 
+
+
+
+
+// ================= IMAGE =================
+export interface OrderProductImage {
+  public_id: string;
+  secure_url: string;
+  _id: string;
+}
+
+// ================= PRODUCT =================
+export interface OrderProductData {
+  _id: string;
+  name: string;
+  description: string;
+  assetFolderId: string;
+
+  images: OrderProductImage[];
+
+  brand: string;
+  category: string;
+
+  discountPercent: number;
+  salePrice: number;
+  originalPrice: number;
+
+  stock: number;
+  soldItems: number;
+
+  createdBy: string;
+
+  createdAt: string;
+  updatedAt: string;
+
+  slug: string;
+  __v: number;
+  id: string;
+}
+
+// ================= USER =================
+export interface OrderUser {
+  _id: string;
+
+  firstName: string;
+  lastName: string;
+  username: string;
+
+  email: string;
+  password: string;
+
+  provider: string;
+  gender: string;
+  role: string;
+
+  preferredLanguage: string;
+
+  wishlist: any[];
+
+  createdAt: string;
+  updatedAt: string;
+
+  confirmEmail: string;
+  __v: number;
+  id: string;
+}
+
+// ================= ORDER PRODUCT =================
+export interface OrderItem {
+  productId: OrderProductData; // ✅ object كامل
+  quantity: number;
+  unitPrice: number;
+
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
+}
+
+// ================= ORDER =================
+export interface OrderData {
+  _id: string;
+  orderId: string;
+
+  address: string;
+  phone: string;
+
+  discount: number;
+  subtotal: number;
+  total: number;
+
+  payment: string;
+
+  products: OrderItem[];
+
+  createdBy: OrderUser; // ✅ object user كامل
+
+  status: number;
+
+  createdAt: string;
+  updatedAt: string;
+
+  __v: number;
+  id: string;
+}
+
+// ================= RESPONSE =================
+export interface OrdersResponse {
+  orders: OrderData[];
 }

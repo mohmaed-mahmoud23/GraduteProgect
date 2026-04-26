@@ -26,7 +26,11 @@ export const registerSchema = z
   });
 
 
-
+export const updateBrandSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  slogan: z.string().min(1, "Slogan is required"),
+  attachment: z.instanceof(File).optional(),
+});
 
 export const ActiveEmailSchema = z
   .object({
@@ -87,12 +91,54 @@ export const createProductSchema = z.object({
   originalPrice: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Price must be a number"),
   discountPercent: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Discount must be a number"),
   stock: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Stock must be a number"),
-attachments: z.array(z.instanceof(File))
+  attachments: z.array(z.instanceof(File))
 });
 
+export const updateCategorySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  slug: z.string().min(1, "Slug is required"),
+  brand: z.string().optional(),
+  attachment: z.instanceof(File).optional(),
+});
+
+export const updateProductSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(1, "Description is required"),
+  brand: z.string().optional(),
+  category: z.string().optional(),
+  originalPrice: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Price must be a number").optional(),
+  discountPercent: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Discount must be a number").optional(),
+  stock: z.union([z.number(), z.string()]).refine((val) => !isNaN(Number(val)), "Stock must be a number").optional(),
+  attachments: z.array(z.instanceof(File)).optional(),
+});
+
+
+
+export const createOrderSchema = z.object({
+  address: z.string().min(1, "Name is required"),
+  phone: z
+    .string()
+    .min(6, "phone must be at least 12 characters"),
+  payment: z.string().min(1, "Please select payment method"),
+});
+
+
+
+
+
+
+
+
+
+
+
+export type createOrderSchemaValues = z.infer<typeof createOrderSchema>;
 export type CreateBrandFormValues = z.infer<typeof createBrandSchema>;
+export type UpdateBrandFormValues = z.infer<typeof updateBrandSchema>;
 export type CreateCategoryFormValues = z.infer<typeof createCategorySchema>;
+export type UpdateCategoryFormValues = z.infer<typeof updateCategorySchema>;
 export type CreateProductFormValues = z.infer<typeof createProductSchema>;
+export type UpdateProductFormValues = z.infer<typeof updateProductSchema>;
 
 export type LoginSchemaSchemaValues = z.infer<typeof LoginSchema>;
 export type ActiveEmailSchemaValues = z.infer<typeof ActiveEmailSchema>;

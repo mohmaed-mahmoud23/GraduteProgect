@@ -8,13 +8,18 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import UpdateProductDialog from "@/components/UpdateProductDialog";
 
 export default function GetAllProducts() {
+    const [open, setOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
     const router = useRouter();
     const { data, isLoading, error } = useGetProductsQuery();
 
     const products = (data?.data as any)?.result?.result || [];
-console.log(products)
+    console.log(products)
     return (
         <div className="p-8 min-h-screen bg-transparent">
             {/* Header */}
@@ -26,8 +31,8 @@ console.log(products)
                     <p className="text-muted-foreground mt-2">
                         Inventory management and stock control
                     </p>
-                </div> 
-                
+                </div>
+
                 <div className="flex items-center gap-3">
                     <div className="relative w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -68,9 +73,22 @@ console.log(products)
                         {products.map((product: any) => (
                             <Card
                                 key={product._id}
-                                className="group overflow-hidden rounded-2xl border-muted/20 bg-background/50 backdrop-blur-md hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1"
+                                className="group overflow-hidden rounded-2xl border-muted/20 bg-background/50 backdrop-blur-md hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1 relative"
                             >
                                 <CardContent className="p-0">
+                                    <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Button
+                                            size="sm"
+                                            variant="secondary"
+                                            className="bg-white/80 backdrop-blur-md shadow-sm"
+                                            onClick={() => {
+                                                setSelectedProduct(product);
+                                                setOpen(true);
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </div>
                                     <div className="relative aspect-square overflow-hidden bg-muted/30">
                                         {product.attachments?.[0]?.secure_url || product.images?.[0]?.secure_url ? (
                                             <Image
@@ -84,7 +102,7 @@ console.log(products)
                                                 No image
                                             </div>
                                         )}
-                                        
+
                                         {/* Badges */}
                                         <div className="absolute top-4 left-4 flex flex-col gap-2">
                                             {product.discountPercent > 0 && (
@@ -97,13 +115,7 @@ console.log(products)
                                             </Badge>
                                         </div>
 
-                                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-md shadow-sm">
-                                                <MoreVertical className="h-4 w-4" />
-                                            </Button>
-                                        </div>
                                     </div>
-
                                     <div className="p-6">
                                         <div className="flex items-center gap-2 mb-2">
                                             <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-primary/70 bg-primary/5 px-2 py-0.5 rounded-full">
@@ -115,11 +127,11 @@ console.log(products)
                                                 {(product.category as any)?.name || "Misc"}
                                             </div>
                                         </div>
-                                        
+
                                         <h3 className="font-bold text-lg text-foreground tracking-tight group-hover:text-primary transition-colors line-clamp-1">
                                             {product.name}
                                         </h3>
-                                        
+
                                         <div className="mt-4 flex items-end justify-between">
                                             <div>
                                                 <p className="text-xs text-muted-foreground line-through decoration-destructive/50">
@@ -139,7 +151,13 @@ console.log(products)
                         ))}
                     </div>
                 )}
+
+                <UpdateProductDialog
+                    open={open}
+                    setOpen={setOpen}
+                    product={selectedProduct}
+                />
             </div>
-        </div>
+        </div >
     );
 }

@@ -1,11 +1,12 @@
-import { SectionCards } from "@/components/section-cards";
-export default function adminpadge(){
-  return(
-    <div>
-   <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <SectionCards />
-                
-                </div>      
+import { DashboardSmartStats } from "@/components/dashboard-smart-stats";
+
+export default function adminpadge() {
+  return (
+    <div className="w-full h-full flex flex-col gap-6">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+      </div>
+      <DashboardSmartStats />
     </div>
-  )
+  );
 }

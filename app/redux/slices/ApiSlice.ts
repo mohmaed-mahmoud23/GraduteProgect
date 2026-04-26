@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CreateBrandResponse, LOGINEmailResponseData, UserProfileResponse, GetAllBrandsResponse, CreateCategoryResponse, GetAllCategoriesResponse, ActiveEmailResponse, CreateProductResponse, GetAllProductsResponse, Product, GetSingleProductResponse, AddToCartResponse, GetCartResponse } from '@/app/interfaces';
+import { CreateBrandResponse, LOGINEmailResponseData, UserProfileResponse, GetAllBrandsResponse, CreateCategoryResponse, GetAllCategoriesResponse, ActiveEmailResponse, CreateProductResponse, GetAllProductsResponse, Product, GetSingleProductResponse, AddToCartResponse, GetCartResponse, CreateOrderResponse, CreateOrderPayload, OrdersResponse } from '@/app/interfaces';
 import { ActiveEmailSchemaValues, LoginSchemaSchemaValues, RegisterFormValues, registerSchema } from './../../../lib/zodAuth';
 // src/services/apiSlice.ts
 
@@ -82,15 +82,6 @@ export const ApiSlice = createApi({
     "Brand",
     "Category",
     "Product",
-    // "Batch",
-    // "BatchStudents",
-    // "Track",
-    // "Lecture",
-    // "Assignment",
-    // "Submission",
-    // "Dashboard",
-    // "my-submission",
-    // "Batches",
   ],
 
   endpoints: (builder) => ({
@@ -103,15 +94,14 @@ export const ApiSlice = createApi({
       }),
     }),
 
-
-
     activeemail: builder.mutation<ActiveEmailSchemaValues, ActiveEmailSchemaValues>({
       query: (credentials) => ({
         url: "auth/confirm-email",
-        method: "PATCH", // 
+        method: "PATCH",
         body: credentials,
       }),
     }),
+
     Singin: builder.mutation<ActiveEmailResponse, LoginSchemaSchemaValues>({
       query: (credentials) => ({
         url: "auth/login",
@@ -120,17 +110,27 @@ export const ApiSlice = createApi({
       }),
     }),
 
+    resendConfirmEmail: builder.mutation<
+      { message: string },
+      { email: string }
+    >({
+      query: (body) => ({
+        url: "auth/resend-confirm-email",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    // ================= BRAND =================
     postbrand: builder.mutation<
       CreateBrandResponse,
       { name: string; slogan: string; attachment: File }
     >({
       query: ({ name, slogan, attachment }) => {
         const formData = new FormData();
-        // Critical: append attachment first and normalize filename to avoid signature errors
         formData.append("attachment", attachment, "image.jpg");
         formData.append("name", name);
         formData.append("slogan", slogan);
-
         return {
           url: "brand",
           method: "POST",
@@ -147,22 +147,32 @@ export const ApiSlice = createApi({
       }),
       providesTags: ["Brand"],
     }),
+
+    updateBrand: builder.mutation<
+      any,
+      { id: string; name?: string; slogan?: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `brand/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Brand"],
+    }),
+
+    // ================= CATEGORY =================
     postcategory: builder.mutation<
       CreateCategoryResponse,
       { name: string; brands: string[]; attachment: File; slug: string }
     >({
       query: ({ name, brands, attachment, slug }) => {
         const formData = new FormData();
-
         formData.append("attachment", attachment, "image.jpg");
         formData.append("name", name);
         formData.append("slug", slug);
-
-        // أهم سطر 🔥
         brands.forEach((id, index) => {
           formData.append(`brands[${index}]`, id);
         });
-
         return {
           url: "category",
           method: "POST",
@@ -172,12 +182,51 @@ export const ApiSlice = createApi({
       invalidatesTags: ["Category"],
     }),
 
+    getCategories: builder.query<GetAllCategoriesResponse, void>({
+      query: () => ({
+        url: "category",
+        method: "GET",
+      }),
+      providesTags: ["Category"],
+    }),
+
+    updateCategory: builder.mutation<
+      any,
+      { id: string; name?: string; slug?: string; brands?: string[]; removeBrands?: string[] }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `category/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Category"],
+    }),
+
+    // ✅ NEW
+    updateCategoryAttachment: builder.mutation<
+      any,
+      { id: string; attachment: File }
+    >({
+      query: ({ id, attachment }) => {
+        const formData = new FormData();
+        formData.append("attachment", attachment, "image.jpg");
+        return {
+          url: `category/${id}/attachment`,
+          method: "PATCH",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
+    // ================= PRODUCT =================
     getProducts: builder.query<GetAllProductsResponse, void>({
       query: () => ({
         url: "product",
         method: "GET",
       }),
     }),
+
     postproduct: builder.mutation<
       CreateProductResponse,
       {
@@ -193,7 +242,6 @@ export const ApiSlice = createApi({
     >({
       query: (data) => {
         const formData = new FormData();
-        // Append each image separately under the same key 'attachments'
         data.attachments.forEach((file) => {
           formData.append("attachments", file, file.name || "product.jpg");
         });
@@ -204,7 +252,6 @@ export const ApiSlice = createApi({
         formData.append("originalPrice", data.originalPrice.toString());
         formData.append("discountPercent", data.discountPercent.toString());
         formData.append("stock", data.stock.toString());
-
         return {
           url: "product",
           method: "POST",
@@ -214,105 +261,103 @@ export const ApiSlice = createApi({
       invalidatesTags: ["Product"],
     }),
 
-    getCategories: builder.query<GetAllCategoriesResponse, void>({
-      query: () => ({
-        url: "category",
-        method: "GET",
-      }),
-      providesTags: ["Category"],
-    }),
-
-
-
-
-
-
-
-addToCart: builder.mutation<
-  AddToCartResponse,
-  { productId: string; quantity: number }
->({
-  query: ({ productId, quantity }) => ({
-    url: "cart",
-    method: "POST",
-    body: {
-      productId,
-      quantity,
-    },
-  }),
-}),
-
-
-
-
-
-
-
-getCart: builder.query<GetCartResponse, void>({
-  query: () => ({
-    url: "cart",
-    method: "GET",
-  }),
-}),
-
-
-
     getsingelprodact: builder.query<GetSingleProductResponse, string>({
       query: (id) => `/product/${id}`,
     }),
 
+    updateProduct: builder.mutation<
+      any,
+      {
+        id: string;
+        name?: string;
+        description?: string;
+        brand?: string;
+        category?: string;
+        originalPrice?: number | string;
+        discountPercent?: number | string;
+        stock?: number | string;
+      }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `product/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Product", "GetSingleProduct" as any],
+    }),
 
+    // ================= CART =================
+    addToCart: builder.mutation<
+      AddToCartResponse,
+      { productId: string; quantity: number }
+    >({
+      query: ({ productId, quantity }) => ({
+        url: "cart",
+        method: "POST",
+        body: { productId, quantity },
+      }),
+    }),
 
+    getCart: builder.query<GetCartResponse, void>({
+      query: () => ({
+        url: "cart",
+        method: "GET",
+      }),
+    }),
 
+    // ================= ORDER =================
+    createOrder: builder.mutation<CreateOrderResponse, CreateOrderPayload>({
+      query: (body) => ({
+        url: "order",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    getorder: builder.query<OrdersResponse, void>({
+      query: () => ({
+        url: "order/admin/all",
+        method: "GET",
+      }),
+    }),
+
+    // ================= USER =================
     getProfile: builder.query<UserProfileResponse, void>({
       query: () => ({
         url: "user",
         method: "GET",
       }),
     }),
-  
-
-
-
-
-
-
-
-
-    
-    resendConfirmEmail: builder.mutation<
-      { message: string },
-      { email: string }
-    >({
-      query: (body) => ({
-        url: "auth/resend-confirm-email",
-        method: "POST",
-        body,
-      }),
-    }),
 
   }),
 });
 
-// ================= AUTH =================
-
-
-
-
-
 export const {
+  // Auth
   useSinginMutation,
   useActiveemailMutation,
   useLoginMutation,
-  useGetProfileQuery,
   useResendConfirmEmailMutation,
+  // Brand
   usePostbrandMutation,
   useGetBrandsQuery,
+  useUpdateBrandMutation,
+  // Category
   usePostcategoryMutation,
   useGetCategoriesQuery,
+  useUpdateCategoryMutation,
+  useUpdateCategoryAttachmentMutation, // ✅ NEW
+  // Product
   usePostproductMutation,
   useGetProductsQuery,
   useGetsingelprodactQuery,
+  useUpdateProductMutation,
+  // Cart
   useAddToCartMutation,
   useGetCartQuery,
-} = ApiSlice
+  // Order
+  useCreateOrderMutation,
+  useGetorderQuery,
+  // User
+  useGetProfileQuery,
+} = ApiSlice;

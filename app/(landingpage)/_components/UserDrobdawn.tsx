@@ -72,9 +72,9 @@ export function UserDropdown() {
 
         {/* Courses */}
         <DropdownMenuItem asChild>
-          <Link href={"/Coures"}>
+          <Link href={"/MyOrder"}>
             <BookOpen className="mr-2 h-4 w-4" />
-            Courses
+            My Order
           </Link>
         </DropdownMenuItem>
 
