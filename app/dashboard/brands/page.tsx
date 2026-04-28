@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useGetBrandsQuery } from "@/app/redux/slices/ApiSlice";
+import { useGetBrandsQuery, useUpdatebrandAttachmentMutation } from "@/app/redux/slices/ApiSlice";
 import { Loader2, Plus, Search, MoreVertical } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +14,13 @@ export default function GetAllBrands() {
   const [open, setOpen] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<any>(null);
   const router = useRouter();
-  const { data, isLoading, error } = useGetBrandsQuery();
+  const { data, error } = useGetBrandsQuery();
+  
+const [updatebrandAttachment, { isLoading }] =
+  useUpdatebrandAttachmentMutation();
+
+
+
 
   const brands = (data?.data as any)?.result?.result || [];
 
@@ -95,6 +101,28 @@ export default function GetAllBrands() {
                 className="group overflow-hidden rounded-2xl border-muted/20 bg-background/50 backdrop-blur-md hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1"
               >
                 <CardContent className="p-0">
+                  <div className="absolute top-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                    {/* زرار تغيير الصورة */}
+                    <label className="cursor-pointer">
+                      <Button asChild >
+                        <span className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium  backdrop-blur-md shadow-sm  transition-colors">
+                          {isLoading ? "Uploading..." : "Change Image"}
+                        </span>
+                      </Button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          await updatebrandAttachment({
+                            id: brand._id,
+                            attachment: file,
+                          });
+                        }}
+                      />
+                    </label>
                   <Button
                     size="sm"
                     onClick={() => {
@@ -104,6 +132,7 @@ export default function GetAllBrands() {
                   >
                     Edit
                   </Button>
+                  </div>
                   <div className="relative aspect-square overflow-hidden bg-muted/30">
                     {brand.image?.secure_url ? (
                       <Image

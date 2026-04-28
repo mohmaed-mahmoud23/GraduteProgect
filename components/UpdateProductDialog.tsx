@@ -106,35 +106,8 @@ export default function UpdateProductDialog({ open, setOpen, product }: any) {
                                 )}
                             />
 
-                            {/* BRAND */}
-                            <FormField
-                                control={form.control}
-                                name="brand"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Brand ID</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} placeholder="Brand ID" />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                       
 
-                            {/* CATEGORY */}
-                            <FormField
-                                control={form.control}
-                                name="category"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Category ID</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} placeholder="Category ID" />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {/* PRICE */}

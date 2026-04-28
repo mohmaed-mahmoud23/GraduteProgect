@@ -218,6 +218,21 @@ export const ApiSlice = createApi({
       },
       invalidatesTags: ["Category"],
     }),
+    updatebrandAttachment: builder.mutation<
+      any,
+      { id: string; attachment: File }
+    >({
+      query: ({ id, attachment }) => {
+        const formData = new FormData();
+        formData.append("attachment", attachment, "image.jpg");
+        return {
+          url: `brand/${id}/attachment`,
+          method: "PATCH",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
 
     // ================= PRODUCT =================
     getProducts: builder.query<GetAllProductsResponse, void>({
@@ -342,6 +357,7 @@ export const {
   usePostbrandMutation,
   useGetBrandsQuery,
   useUpdateBrandMutation,
+  useUpdatebrandAttachmentMutation,
   // Category
   usePostcategoryMutation,
   useGetCategoriesQuery,
