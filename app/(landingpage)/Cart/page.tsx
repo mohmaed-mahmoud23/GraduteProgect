@@ -3,22 +3,36 @@
 import Image from "next/image";
 import { useGetCartQuery } from "@/app/redux/slices/ApiSlice";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Toast } from "radix-ui";
 
 export default function GetAcrtuser() {
   const { data, isLoading } = useGetCartQuery();
+  const router = useRouter();
 
   const products = data?.data?.cart?.products || [];
   const hasProducts = products.length > 0;
 
   if (isLoading) return <p>Loading...</p>;
 
+  // 👇 دي أهم نقطة
+  const handleCheckout = () => {
+    if (!hasProducts) {
+      toast.error("where your order !?")
+      return;
+    }
+
+    // لو فيه منتجات
+    router.push("/Creatorder");
+  };
+
   return (
     <div className="p-4">
       {/* المنتجات */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {products
-          .filter((item) => item.productId) // يمنع null products
+          .filter((item) => item.productId)
           .map((item) => (
             <div
               key={item._id}
@@ -60,20 +74,17 @@ export default function GetAcrtuser() {
           </p>
         </div>
 
-        <Link href={"/Creatorder"}>
-          <Button
-            variant={"ghost"}
-            disabled={!hasProducts}
-            className={`px-6 py-2 rounded-xl text-sm font-semibold transition-all duration-300
-              ${
-                hasProducts
-                  ? "text-black bg-white hover:bg-gray-200"
-                  : "bg-gray-500 text-gray-300 cursor-not-allowed"
-              }`}
-          >
-            Checkout
-          </Button>
-        </Link>
+        <Button
+          onClick={handleCheckout}
+          className={`px-6 py-2 rounded-xl text-sm font-semibold transition-all duration-300
+            ${
+              hasProducts
+                ? "text-black bg-white hover:bg-gray-200"
+                : "bg-gray-500 text-gray-300"
+            }`}
+        >
+          Checkout
+        </Button>
       </div>
     </div>
   );

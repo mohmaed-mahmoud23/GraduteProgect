@@ -22,18 +22,6 @@ export default function ProductCard({ products }: ProductCardProps) {
 
  const [addToCart, { isLoading }] = useAddToCartMutation();
 
-const handleAddToCart = async () => {
-  try {
-    const res = await addToCart({
-      productId: products._id ,
-      quantity : 1
-    }).unwrap();
-
-    console.log("Cart:", res.data.cart);
-  } catch (error) {
-    console.log(error);
-  }
-};
 
   
   return (
