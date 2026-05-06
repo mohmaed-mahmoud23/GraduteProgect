@@ -35,13 +35,16 @@ export default function CinematicScroll() {
   useEffect(() => {
     setMounted(true);
     let ctx = gsap.context(() => {
-      // Pin the left column while the right column scrolls
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        pin: leftColRef.current,
-        pinSpacing: false,
+      // Pin the left column ONLY on desktop
+      let mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px)", () => {
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          pin: leftColRef.current,
+          pinSpacing: false,
+        });
       });
 
       // Animate each feature item on scroll
@@ -80,7 +83,7 @@ export default function CinematicScroll() {
         {/* Left Column (Fixed Text) */}
         <div
           ref={leftColRef}
-          className="w-full lg:w-1/2 h-screen flex flex-col justify-center max-w-2xl py-20 z-20"
+          className="w-full lg:w-1/2 h-auto lg:h-screen flex flex-col justify-center max-w-2xl py-10 lg:py-20 z-20"
         >
           <p className="split-text text-accent font-semibold flex items-center gap-4 mb-8 uppercase tracking-[0.3em] text-xs">
             <span className="w-8 h-[1px] bg-accent inline-block" />
@@ -99,10 +102,10 @@ export default function CinematicScroll() {
         </div>
 
         {/* Right Column (Scrolling UI & Interactive Robot) */}
-        <div className="w-full lg:w-[50%] flex flex-col pt-[20vh] pb-[20vh] z-10 relative">
+        <div className="w-full lg:w-[50%] flex flex-col pt-10 lg:pt-[20vh] pb-10 lg:pb-[20vh] z-10 relative">
 
           {/* Interactive Spline Robot - Sticky inside the right column */}
-          <div className="w-full h-[60vh] sticky top-[20vh] mb-32 rounded-[2.5rem] border border-border/10 bg-card/5 backdrop-blur-3xl overflow-hidden shadow-2xl flex items-center justify-center transform-style-3d ring-1 ring-white/5 z-0">
+          <div className="w-full h-[40vh] lg:h-[60vh] sticky top-[10vh] lg:top-[20vh] mb-16 lg:mb-32 rounded-[2.5rem] border border-border/10 bg-card/5 backdrop-blur-3xl overflow-hidden shadow-2xl flex items-center justify-center transform-style-3d ring-1 ring-white/5 z-0">
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent z-0"></div>
 
             {/* Replace this URL with your custom Spline Robot URL if needed */}
@@ -119,7 +122,7 @@ export default function CinematicScroll() {
           </div>
 
           {/* Changing Sections / Cards */}
-          <div className="flex flex-col gap-32 relative z-10 mt-[20vh]">
+          <div className="flex flex-col gap-16 lg:gap-32 relative z-10 mt-10 lg:mt-[20vh]">
             {features.map((feat) => (
               <div
                 key={feat.id}

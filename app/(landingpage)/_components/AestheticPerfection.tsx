@@ -46,7 +46,7 @@ export default function AestheticPerfection() {
       <div className="px-6 md:px-20 w-full max-w-7xl flex flex-col items-center z-10 relative">
         <div 
           ref={cardRef}
-          className="relative w-full max-w-[65rem] rounded-[3rem] p-12 md:p-32 overflow-hidden ring-1 ring-white/5"
+          className="relative w-full max-w-[65rem] rounded-[3rem] p-6 md:p-32 overflow-hidden ring-1 ring-white/5"
         >
           {/* Glassmorphism panel */}
           <div className="absolute inset-0 bg-card/20 backdrop-blur-[50px] shadow-[0_40px_100px_rgba(0,0,0,0.4)] z-0" />
@@ -65,11 +65,11 @@ export default function AestheticPerfection() {
               <Gem className="w-10 h-10 text-foreground relative z-10 group-hover:scale-110 transition-transform duration-700" strokeWidth={1} />
             </div>
 
-            <h2 className="text-4xl md:text-6xl lg:text-[5.5rem] font-bold tracking-tighter leading-[1.1] mb-12 text-transparent bg-clip-text bg-gradient-to-b from-white via-foreground to-foreground/40 drop-shadow-sm">
+            <h2 className="text-3xl md:text-6xl lg:text-[5.5rem] font-bold tracking-tighter leading-[1.1] mb-8 md:mb-12 text-transparent bg-clip-text bg-gradient-to-b from-white via-foreground to-foreground/40 drop-shadow-sm">
               Aesthetic Perfection
             </h2>
 
-            <p className="text-xl md:text-3xl lg:text-4xl text-muted-foreground/80 leading-[1.6] max-w-4xl font-light">
+            <p className="text-lg md:text-3xl lg:text-4xl text-muted-foreground/80 leading-[1.6] max-w-4xl font-light">
               Because industrial doesn't mean ugly. Our finishes provide a <span className="text-foreground font-normal">flawless, sleek look</span> that elevates the perception of your workspace.
             </p>
           </div>
