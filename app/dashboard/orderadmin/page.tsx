@@ -44,14 +44,14 @@ export default function ADMINSuer() {
     </div>
   );
 
-  const orders = data?.data?.orders || [];
+  const orders = data?.orders || [];
   
   // Calculate stats
   const totalRevenue = orders.reduce((acc: number, order: any) => acc + (order.total || 0), 0);
   const pendingOrders = orders.filter((o: any) => o.status === 0).length;
   const completedOrders = orders.filter((o: any) => o.status !== 0).length;
 
-  const container = {
+  const container: any = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
@@ -61,7 +61,7 @@ export default function ADMINSuer() {
     }
   };
 
-  const itemAnim = {
+  const itemAnim: any = {
     hidden: { opacity: 0, scale: 0.95, y: 20 },
     show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", bounce: 0.4 } }
   };

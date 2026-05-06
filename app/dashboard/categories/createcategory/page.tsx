@@ -162,7 +162,7 @@ await createCategory({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="rounded-xl border-muted/20 shadow-xl">
-                            {brands.map((brand) => (
+                            {brands.map((brand: { _id: string; name: string }) => (
                               <SelectItem
                                 key={brand._id}
                                 value={brand._id}

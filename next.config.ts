@@ -1,10 +1,12 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
-    domains: ["res.cloudinary.com"],
+    domains: [
+      "res.cloudinary.com",
+      "images.unsplash.com",
+    ],
   },
   transpilePackages: ["@splinetool/react-spline"],
 };
 
-export default nextConfig;
+module.exports = nextConfig;

@@ -33,7 +33,7 @@ export function DashboardSmartStats() {
   const products = productsData?.data?.result?.result || [];
   const categories = (categoriesData?.data as any)?.result?.result || [];
   const brands = brandsData?.data?.result?.result || [];
-  const orders = ordersData?.data?.result?.result || [];
+  const orders = ordersData?.orders || [];
 
   const loading = pLoad || cLoad || bLoad || oLoad;
 

@@ -312,7 +312,7 @@ export interface CartProductItem {
   };
 }
 
-export interface Cart {
+export interface PopulatedCart {
   _id: string;
   createdBy: string;
   products: CartProductItem[];
@@ -324,7 +324,7 @@ export interface GetCartResponse {
   message: string;
   status: number;
   data: {
-    cart: Cart;
+    cart: PopulatedCart;
   };
 } 
 

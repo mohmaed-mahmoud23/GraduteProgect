@@ -28,7 +28,7 @@ export function UserDropdown() {
 
   const { data } = useGetProfileQuery();
 
-  const profile = data?.data?.profile 
+  const profile = data?.data;
 
   const role = profile?.role;
 

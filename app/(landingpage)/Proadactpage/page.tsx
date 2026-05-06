@@ -30,7 +30,7 @@ export default function GettAllProdact() {
 
       // We need to wait for rendering if products are loaded
       if (!isLoading && products.length > 0) {
-        const cards = gsap.utils.toArray(".product-card-wrap");
+        const cards = gsap.utils.toArray(".product-card-wrap") as HTMLElement[];
         
         ScrollTrigger.batch(cards, {
           onEnter: (elements) => {

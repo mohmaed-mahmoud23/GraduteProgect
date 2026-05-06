@@ -41,9 +41,9 @@ export default function LayeredPinning() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      const allCards = gsap.utils.toArray(".stacked-card");
+      const allCards = gsap.utils.toArray(".stacked-card") as HTMLElement[];
 
-      allCards.forEach((card: any, index: number) => {
+      allCards.forEach((card: HTMLElement, index: number) => {
         ScrollTrigger.create({
           trigger: card,
           start: `top top+=${index * 40}`, // Stagger the pinning point slightly so they stack visually
