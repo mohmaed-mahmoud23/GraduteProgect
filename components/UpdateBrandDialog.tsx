@@ -22,16 +22,16 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Image as ImageIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { z } from "zod";
+
 import { useUpdateBrandMutation } from "@/app/redux/slices/ApiSlice";
 import { updateBrandSchema, UpdateBrandFormValues } from "@/lib/zodAuth";
 
 
 
-export default function UpdateBrandDialog({ open, setOpen, brand }: any) {
+export default function UpdateBrandDialog({ open, setOpen, brand }: { open: boolean, setOpen: (v: boolean) => void, brand: { _id: string, name: string, slogan: string } }) {
   const [updateBrand, { isLoading }] = useUpdateBrandMutation();
 
   const form = useForm<UpdateBrandFormValues>({
@@ -52,8 +52,8 @@ export default function UpdateBrandDialog({ open, setOpen, brand }: any) {
 
       toast.success("Brand updated ✅");
       setOpen(false);
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Error ❌");
+    } catch (err: unknown) {
+      toast.error((err as { data?: { message?: string } })?.data?.message || "Error ❌");
     }
   };
 

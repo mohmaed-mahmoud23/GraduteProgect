@@ -75,7 +75,7 @@ export function TeamGrid({ members }: TeamGridProps) {
           </div>
           <h3 className="text-2xl font-semibold mb-2 tracking-tight">No team members found</h3>
           <p className="text-muted-foreground max-w-md mb-6">
-            We couldn't find anyone matching your search for "{searchQuery}". Try adjusting your filters or add a new team member.
+            We couldn&apos;t find anyone matching your search for &quot;{searchQuery}&quot;. Try adjusting your filters or add a new team member.
           </p>
           <Button variant="outline" onClick={() => setSearchQuery("")}>
             Clear Search

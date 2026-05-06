@@ -16,4 +16,5 @@ class CookieService {
   }
 }
 
-export default new CookieService();
+const cookieServiceInstance = new CookieService();
+export default cookieServiceInstance;

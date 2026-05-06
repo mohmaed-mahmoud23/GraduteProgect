@@ -22,7 +22,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Loader2, Image as ImageIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -30,7 +30,8 @@ import { useUpdateProductMutation } from "@/app/redux/slices/ApiSlice";
 import { updateProductSchema, UpdateProductFormValues } from "@/lib/zodAuth";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function UpdateProductDialog({ open, setOpen, product }: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function UpdateProductDialog({ open, setOpen, product }: { open: boolean, setOpen: (v: boolean) => void, product: any }) {
     const [updateProduct, { isLoading }] = useUpdateProductMutation();
 
     const form = useForm<UpdateProductFormValues>({
@@ -61,8 +62,8 @@ export default function UpdateProductDialog({ open, setOpen, product }: any) {
 
             toast.success("Product updated ✅");
             setOpen(false);
-        } catch (err: any) {
-            toast.error(err?.data?.message || "Error ❌");
+        } catch (err: unknown) {
+            toast.error((err as { data?: { message?: string } })?.data?.message || "Error ❌");
         }
     };
 
