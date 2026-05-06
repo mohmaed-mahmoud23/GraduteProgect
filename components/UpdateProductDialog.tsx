@@ -30,7 +30,7 @@ import { useUpdateProductMutation } from "@/app/redux/slices/ApiSlice";
 import { updateProductSchema, UpdateProductFormValues } from "@/lib/zodAuth";
 import { Textarea } from "@/components/ui/textarea";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export default function UpdateProductDialog({ open, setOpen, product }: { open: boolean, setOpen: (v: boolean) => void, product: any }) {
     const [updateProduct, { isLoading }] = useUpdateProductMutation();
 

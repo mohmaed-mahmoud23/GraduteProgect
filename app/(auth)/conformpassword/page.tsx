@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import Link from "next/link";
-import ResendPassword from "../resneoassword/page";
+
 
 export default function VerifyRequestForm() {
   const router = useRouter();

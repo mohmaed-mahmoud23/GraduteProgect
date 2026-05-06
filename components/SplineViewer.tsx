@@ -27,7 +27,7 @@ export default function SplineViewer({ url, className }: SplineViewerProps) {
 
   return (
     <div className={className}>
-      {/* @ts-ignore - spline-viewer is a custom element */}
+      {/* @ts-expect-error - spline-viewer is a custom element */}
       <spline-viewer url={url} />
     </div>
   );

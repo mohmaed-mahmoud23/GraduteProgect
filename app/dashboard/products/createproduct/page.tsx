@@ -319,7 +319,7 @@ export default function CreateProductPage() {
                                     key={`${file.name}-${index}`}
                                     className="relative group rounded-xl overflow-hidden border border-muted/30 aspect-square shadow-sm"
                                   >
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+
                                     <img
                                       src={url}
                                       alt={file.name}
