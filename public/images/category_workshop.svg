@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="greyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="blueAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#0369a1" stop-opacity="0.05" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#greyGrad)" />
+  <circle cx="200" cy="450" r="250" fill="#38bdf8" opacity="0.06" filter="blur(70px)" />
+  <g opacity="0.15">
+    <line x1="50" y1="0" x2="50" y2="600" stroke="#38bdf8" stroke-width="1" />
+    <line x1="150" y1="0" x2="150" y2="600" stroke="#38bdf8" stroke-width="1" />
+    <line x1="250" y1="0" x2="250" y2="600" stroke="#38bdf8" stroke-width="1" />
+    <line x1="350" y1="0" x2="350" y2="600" stroke="#38bdf8" stroke-width="1" />
+    <line x1="0" y1="100" x2="800" y2="100" stroke="#38bdf8" stroke-width="1" />
+    <line x1="0" y1="250" x2="800" y2="250" stroke="#38bdf8" stroke-width="1" />
+    <line x1="0" y1="400" x2="800" y2="400" stroke="#38bdf8" stroke-width="1" />
+  </g>
+  <rect x="450" y="150" width="250" height="300" fill="url(#blueAccent)" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.4" rx="20" />
+  <g transform="translate(575, 300)" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.6">
+    <path d="M-30 -15 L30 -15 L20 25 L-20 25 Z" />
+    <circle cx="0" cy="0" r="8" />
+  </g>
+  <text x="50%" y="85%" font-family="system-ui, sans-serif" font-size="14" font-weight="600" letter-spacing="8" fill="#38bdf8" fill-opacity="0.6" text-anchor="middle">
+    PROFESSIONAL WORKSHOP / PRECISION SETUP
+  </text>
+</svg>

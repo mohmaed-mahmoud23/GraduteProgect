@@ -5,14 +5,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, ShoppingCart, Loader2, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useGetProductsQuery } from "@/app/redux/slices/ApiSlice";
+import { mockProducts } from "./mockData";
 
 export default function ProductShowcase() {
-  const { data, isLoading } = useGetProductsQuery();
-  const products = data?.data?.result?.result || [];
-
-  // Show only up to 3 products to keep the minimal premium look
-  const displayProducts = products.slice(0, 3);
+  const isLoading = false;
+  const displayProducts = mockProducts;
 
   return (
     <section className="w-full bg-background py-32 px-6 md:px-20 border-t border-border/10 relative overflow-hidden">

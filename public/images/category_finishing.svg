@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c130c" />
+      <stop offset="50%" stop-color="#3d2b1f" />
+      <stop offset="100%" stop-color="#0f0a06" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d97706" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.2" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#goldGrad)" />
+  <circle cx="600" cy="150" r="300" fill="#d97706" opacity="0.05" filter="blur(80px)" />
+  <path d="M-100 400 C 150 250, 400 550, 900 350 L 900 600 L -100 600 Z" fill="url(#accentGrad)" opacity="0.15" />
+  <path d="M-100 450 C 200 350, 350 500, 900 400" fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.3" />
+  <g transform="translate(400, 250)" stroke="#f59e0b" stroke-width="1.5" fill="none" opacity="0.7">
+    <path d="M -40 0 L 40 0 M 0 -40 L 0 40" stroke-dasharray="4 4" />
+    <circle cx="0" cy="0" r="25" />
+    <circle cx="0" cy="0" r="35" stroke-dasharray="6 3" />
+  </g>
+  <text x="50%" y="85%" font-family="system-ui, sans-serif" font-size="14" font-weight="600" letter-spacing="8" fill="#f59e0b" fill-opacity="0.6" text-anchor="middle">
+    WOOD FINISHING / PREMIUM COATING
+  </text>
+</svg>

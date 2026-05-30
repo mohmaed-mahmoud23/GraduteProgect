@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import { useGetCategoriesQuery } from "@/app/redux/slices/ApiSlice";
+import { mockCategories } from "./mockData";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,8 +13,8 @@ if (typeof window !== "undefined") {
 export default function HorizontalScrollGallery() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { data, isLoading } = useGetCategoriesQuery();
-  const categories = (data?.data as any)?.result?.result || [];
+  const isLoading = false;
+  const categories = mockCategories;
 
   useEffect(() => {
     if (!sectionRef.current || !containerRef.current || categories.length === 0) return;
